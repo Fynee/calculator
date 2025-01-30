@@ -1,42 +1,72 @@
 function add(n1, n2) {
-    return n1 + n2
+    display.innerText = n1 + n2
+    return display.innerText
 }
 function subtract(n1, n2) {
-    return n1 - n2
+    display.innerText = n1 - n2
+    return display.innerText
 }
 function multiply(n1, n2) {
-    return n1 * n2
+    display.innerText = n1 * n2
+    return display.innerText
 }
 function divide(n1, n2) {
-    return n1 / n2
+    display.innerText = n1 / n2
+    return display.innerText
 }
 
-let firstNum
-let operator
-let secondNum
+
 
 function operate() {
     const displayLast = displayValue
+
     function getOperator() {
-        return operator = displayLast.filter((value) => value === /[+\-*/]/g)
+        return displayLast.find((value) => /[+\-*/]/.test(value)) || null
     }
-    getOperator()
     function getFirstNum() {
-        for (let i = 0; displayLast[i] !== /[+\-*/]/g; i++) {
-            firstNum += displayLast[i]
+        let num = "";
+        for (let i = 0; i < displayLast.length; i++) {
+            const current = displayLast[i];
+            if (/\d|\.|-/.test(current)) {
+                if (current === "-" && current === "") {
+                    num = current + num;
+                } else if (current !== "-" || current !== "") {
+                    num = current + num;
+                }
+            } else if (/[+\-*/]/.test(current)) {
+                break
+            }
         }
-        return firstNum
+        return num !== "" ? parseFloat(num) : null
     }
-    getFirstNum()
     function getSecondNum() {
-        for (let i = displayLast.length - 1; displayLast[i] !== /[+\-*/]/g; i--) {
-            secondNum += displayLast[i]
+        let num = ""
+        for (let i = displayLast.length - 1; i >= 0; i--) {
+            const current = displayLast[i];
+            if (/\d|\.|-/.test(current)) {
+                num += current;
+            } else if (/[+\-*/]/.test(current)) {
+                break
+            }
         }
-        return secondNum
+        num = num.split("").reverse().join("")
+        return num !== "" ? parseFloat(num) : null
     }
-    getSecondNum()
-    console.log(firstNum, secondNum, operator)
+
+    const operator = getOperator()
+    const firstNum = getFirstNum()
+    const secondNum = getSecondNum()
+
+    if (firstNum === null || secondNum === null || operator === "") {
+        displayValue = []
+        display.innerText = "Wrong input"
+    } else if (operator === "+") return add(firstNum, secondNum)
+      else if (operator === "-") return subtract(firstNum, secondNum)
+      else if (operator === "*") return multiply(firstNum, secondNum)
+      else if (operator === "/") return divide(firstNum, secondNum)
 }
+
+
 const display = document.querySelector(".table-output")
 
 const addBtn = document.querySelector(".add")
