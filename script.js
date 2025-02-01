@@ -57,7 +57,11 @@ function operate() {
         }
         return num !== "" ? parseFloat(num) : null
     }
-    
+
+
+
+
+
     function getSecondNum() {
         let num = ""
         for (let i = displayLast.length - 1; i >= 0; i--) {
