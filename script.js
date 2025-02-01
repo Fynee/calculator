@@ -64,7 +64,6 @@ function operate() {
             break;
         }
     }
-
     const firstNum = display.textContent.slice(0, operatorIndex)
     const secondNum = display.textContent.slice(operatorIndex + 1).split(/[+\-*/]/)[0];
 
