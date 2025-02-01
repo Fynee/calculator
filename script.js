@@ -67,6 +67,7 @@ function operate() {
     const firstNum = display.textContent.slice(0, operatorIndex)
     const secondNum = display.textContent.slice(operatorIndex + 1).split(/[+\-*/]/)[0];
 
+
     if ( operator === "" || firstNum === "" || secondNum === "") {
         resetDisplay = true;
         return display.textContent = "Wrong input";
