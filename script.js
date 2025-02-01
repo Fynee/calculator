@@ -22,9 +22,6 @@ const ACBtn = document.querySelector(".AC")
 const backSpaceBtn = document.querySelector(".backspace")
 
 
-
-
-
 let resetDisplay = false
 let containsPoint = false
 
