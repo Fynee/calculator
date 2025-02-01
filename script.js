@@ -26,7 +26,7 @@ let resetDisplay = false
 let containsPoint = false
 
 function updateDisplay(text) {
-    !display.textContent.match(".") ? containsPoint = false: containsPoint = true
+    !display.textContent.slice(-1).match(".") ? containsPoint = false: containsPoint = true
     if (resetDisplay) display.textContent = "";
     display.textContent += text;
     resetDisplay = false
@@ -41,7 +41,6 @@ function AC() {
     containsPoint = false
 }
 function operate() {
-    debugger
     if (display.textContent === "") {
         resetDisplay = true;
         return display.textContent = "0";
@@ -101,28 +100,19 @@ function operate() {
             updateDisplay(divide(num1, num2))
     }
 }
-function correctValue(n1) {
-    return (n1*10)/10
-}
 
 function add(n1, n2) {
-    return correctValue(n1) + correctValue(n2);
+    return (n1*10 + n2*10)/10
 }
 function subtract(n1, n2) {
-    return correctValue(n1) - correctValue(n2)
+    return (n1*10 - n2*10)/10
 }
 function multiply(n1, n2) {
-    return correctValue(n1) * correctValue(n2)
+    return n1 * n2
 }
 function divide(n1, n2) {
-    return correctValue(n1) / correctValue(n2)
+    return n1 / n2
 }
-
-
-
-
-
-
 
 
 
@@ -162,7 +152,7 @@ nineBtn.addEventListener('click', () => updateDisplay("9"))
 zeroBtn.addEventListener('click', () => updateDisplay("0"))
 
 pointBtn.addEventListener('click', () => {
-    if (!containsPoint) {
+    if (!containsPoint && !display.textContent.slice(-1).match(/[+\-*/]/)) {
         updateDisplay(".")
         containsPoint = true
     }
