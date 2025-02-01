@@ -15,151 +15,162 @@ const eightBtn = document.querySelector(".eight")
 const nineBtn = document.querySelector(".nine")
 const zeroBtn = document.querySelector(".zero")
 
+const pointBtn = document.querySelector(".point")
+
 const equalsBtn = document.querySelector(".equals")
 const ACBtn = document.querySelector(".AC")
 const backSpaceBtn = document.querySelector(".backspace")
 
-function add(n2, n1) {
-    display.innerText = n1 + n2
-    return display.innerText
+
+
+
+
+let resetDisplay = false
+let containsPoint = false
+
+function updateDisplay(text) {
+    !display.textContent.match(".") ? containsPoint = false: containsPoint = true
+    if (resetDisplay) display.textContent = "";
+    display.textContent += text;
+    resetDisplay = false
 }
-function subtract(n2, n1) {
-    display.innerText = n1 - n2
-    return display.innerText
-}
-function multiply(n2, n1) {
-    display.innerText = n1 * n2
-    return display.innerText
-}
-function divide(n2, n1) {
-    display.innerText = n2 / n1
-    return display.innerText
-}
-function operate() {
-    const displayLast = displayValue
-
-    function getOperator() {
-        return displayLast.find((value) => /[+\-*/]/.test(value)) || null
-    }
-    function getFirstNum() {
-        let num = "";
-        for (let i = 0; i < displayLast.length; i++) {
-            const current = displayLast[i];
-            if (/\d|\.|-/.test(current)) {
-                if (current === "-" && current === "") {
-                    num = num + current;
-                } else if (current !== "-" || current !== "") {
-                    num = num + current;
-                }
-            } else if (/[+\-*/]/.test(current)) {
-                break
-            }
-        }
-        return num !== "" ? parseFloat(num) : null
-    }
-
-
-
-
-
-    function getSecondNum() {
-        let num = ""
-        for (let i = displayLast.length - 1; i >= 0; i--) {
-            const current = displayLast[i];
-            if (/\d|\.|-/.test(current)) {
-                num += current;
-            } else if (/[+\-*/]/.test(current)) {
-                break
-            }
-        }
-        num = num.split("").reverse().join("")
-
-        return num !== "" ? parseFloat(num) : null
-    }
-
-    const operator = getOperator()
-    const firstNum = getFirstNum()
-    const secondNum = getSecondNum()
-
-    console.log(firstNum, operator, secondNum)
-
-    if (firstNum === null || secondNum === null || operator === "") {
-        displayValue = []
-        display.innerText = "Wrong input"
-    } else if (operator === "+") {
-
-        add(firstNum, secondNum)
-    }
-      else if (operator === "-") {
-          subtract(firstNum, secondNum)
-    }
-      else if (operator === "*") {
-          multiply(firstNum, secondNum)
-    }
-      else if (operator === "/") {
-          divide(firstNum, secondNum)
-    }
-}
-
-let displayValue = []
 
 function backSpace() {
-    if (typeof displayValue.slice(-2) !== "undefined") {
-        displayValue.pop()
-        display.innerText = displayValue.join("")
-    } else {
-        display.innerText = ""
-    }
-    console.log(displayValue.join(','))
+    display.textContent = display.textContent.slice(0, -1)
+    !display.textContent.match(".") ? containsPoint = false: containsPoint = true
 }
-
-function btnClick(e) {
-    if (shouldResetDisplay) {
-        display.innerText = ""
-        displayValue = []
-        shouldResetDisplay = false
-    }
-    displayValue.push(`${e}`)
-    console.log(displayValue.join(','))
-    display.innerText += displayValue.slice(-1).toString()
-}
-
 function AC() {
-    display.innerText = ""
-    displayValue = []
+    display.textContent = "";
+    containsPoint = false
 }
+function operate() {
+    debugger
+    if (display.textContent === "") {
+        resetDisplay = true;
+        return display.textContent = "0";
+    }
+
+    if (display.textContent.match(".")) {
+        containsPoint = true
+    }
+
+    let operator = ""
+    let operatorIndex = -1
+
+    for (let i = 0; i < display.textContent.length; i++) {
+        if (display.textContent[i].match(/[+\-*/]/)) {
+            operatorIndex = i;
+            operator = display.textContent[i]
+            break;
+        }
+    }
+
+    const firstNum = display.textContent.slice(0, operatorIndex)
+    const secondNum = display.textContent.slice(operatorIndex + 1).split(/[+\-*/]/)[0];
+
+    if ( operator === "" || firstNum === "" || secondNum === "") {
+        resetDisplay = true;
+        return display.textContent = "Wrong input";
+    }
+
+    const num1 = parseFloat(firstNum);
+    const num2 = parseFloat(secondNum);
+
+    if (isNaN(num1) || isNaN(num2)) {
+        resetDisplay = true;
+        return display.textContent = "Invalid input";
+    }
+
+    if (operator === "/" && num2 === 0) {
+        resetDisplay = true;
+        return display.textContent = "Cannot divide by 0";
+    }
+
+    switch (operator) {
+        case "+":
+            resetDisplay = true
+            updateDisplay(add(num1, num2))
+            break;
+        case "-":
+            resetDisplay = true
+            updateDisplay(subtract(num1, num2))
+            break;
+        case "*":
+            resetDisplay = true
+            updateDisplay(multiply(num1, num2))
+            break;
+        case "/":
+            resetDisplay = true
+            updateDisplay(divide(num1, num2))
+    }
+}
+function correctValue(n1) {
+    return (n1*10)/10
+}
+
+function add(n1, n2) {
+    return correctValue(n1) + correctValue(n2);
+}
+function subtract(n1, n2) {
+    return correctValue(n1) - correctValue(n2)
+}
+function multiply(n1, n2) {
+    return correctValue(n1) * correctValue(n2)
+}
+function divide(n1, n2) {
+    return correctValue(n1) / correctValue(n2)
+}
+
+
+
+
+
+
+
+
 
 addBtn.addEventListener('click', () => {
-    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) btnClick("+")
+    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) {
+        updateDisplay("+")
+        containsPoint = false
+    }
 })
 subtractBtn.addEventListener('click', () => {
-    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) btnClick("-")
+    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) {
+        updateDisplay("-")
+        containsPoint = false
+    }
 })
 multiplyBtn.addEventListener('click', () => {
-    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) btnClick("*")
+    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) {
+        updateDisplay("*")
+        containsPoint = false
+    }
 })
 divideBtn.addEventListener('click', () => {
-    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) btnClick("/")
+    if (!display.innerText.slice(-1).match(/[+\-*/]/g)) {
+        updateDisplay("/")
+        containsPoint = false
+    }
 })
-oneBtn.addEventListener('click', () => btnClick("1"))
-twoBtn.addEventListener('click', () => btnClick("2"))
-threeBtn.addEventListener('click', () => btnClick("3"))
-fourBtn.addEventListener('click', () => btnClick("4"))
-fiveBtn.addEventListener('click', () => btnClick("5"))
-sixBtn.addEventListener('click', () => btnClick("6"))
-sevenBtn.addEventListener('click', () => btnClick("7"))
-eightBtn.addEventListener('click', () => btnClick("8"))
-nineBtn.addEventListener('click', () => btnClick("9"))
-zeroBtn.addEventListener('click', () => btnClick("0"))
+oneBtn.addEventListener('click', () => updateDisplay("1"))
+twoBtn.addEventListener('click', () => updateDisplay("2"))
+threeBtn.addEventListener('click', () => updateDisplay("3"))
+fourBtn.addEventListener('click', () => updateDisplay("4"))
+fiveBtn.addEventListener('click', () => updateDisplay("5"))
+sixBtn.addEventListener('click', () => updateDisplay("6"))
+sevenBtn.addEventListener('click', () => updateDisplay("7"))
+eightBtn.addEventListener('click', () => updateDisplay("8"))
+nineBtn.addEventListener('click', () => updateDisplay("9"))
+zeroBtn.addEventListener('click', () => updateDisplay("0"))
 
-
-ACBtn.addEventListener('click', AC)
+pointBtn.addEventListener('click', () => {
+    if (!containsPoint) {
+        updateDisplay(".")
+        containsPoint = true
+    }
+})
 
 backSpaceBtn.addEventListener('click', backSpace)
-
-let shouldResetDisplay = false;
-
-equalsBtn.addEventListener('click', () => {
-    operate()
-    shouldResetDisplay = true
-})
+ACBtn.addEventListener('click', AC)
+equalsBtn.addEventListener('click', operate)
